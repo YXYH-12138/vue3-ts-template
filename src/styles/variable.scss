@@ -1,0 +1,69 @@
+@use "sass:map";
+
+// 主题颜色
+$theme-color: #409eff;
+// 背景颜色
+$bg-color: #fff;
+
+/** 重写element-plus的样式，不要和element的变量名称一样，这里用r开头，表示 rewrite */
+
+// 字体颜色
+$r-text-color: (
+	"primary": #303133,
+	"regular": #606266,
+	"secondary": #909399,
+	"placeholder": #a8abb2,
+	"disabled": #c0c4cc
+);
+// 字体大小
+$r-font-size: (
+	"extra-large": 20px,
+	"large": 18px,
+	"medium": 16px,
+	"base": 16px,
+	"small": 13px,
+	"extra-small": 12px
+);
+// 主题
+$r-colors: (
+	"white": #ffffff,
+	"black": #000000,
+	"primary": (
+		"base": $theme-color
+	),
+	"success": (
+		"base": #67c23a
+	),
+	"warning": (
+		"base": #e6a23c
+	),
+	"danger": (
+		"base": #f56c6c
+	),
+	"error": (
+		"base": #f56c6c
+	),
+	"info": (
+		"base": #909399
+	)
+);
+
+// 自定义elment-plus前缀
+// @forward "element-plus/theme-chalk/src/mixins/config.scss" with (
+// 	$namespace: "ep"
+// );
+
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+	$colors: $r-colors,
+	$text-color: $r-text-color,
+	$font-size: $r-font-size
+);
+
+// if you want to import all
+// @use "element-plus/theme-chalk/src/index.scss" as *;
+
+// You can comment it to hide debug info.
+// @debug $--colors;
+
+// custom dark variables
+// @use "./dark.scss";

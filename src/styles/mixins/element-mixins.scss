@@ -1,0 +1,9 @@
+// el-card
+@mixin set-el-card($padding, $center: true) {
+	--el-card-padding: #{$padding};
+	@if $center {
+		:deep(.el-card__header) {
+			text-align: center;
+		}
+	}
+}

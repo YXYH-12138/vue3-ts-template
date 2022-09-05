@@ -1,52 +1,78 @@
 import axios from "axios";
-import type { AxiosRequestConfig, AxiosInstance, Canceler } from "axios";
+import { ref, ShallowRef, shallowRef } from "vue";
+import type { AxiosRequestConfig, AxiosInstance, CancelToken, CancelTokenSource } from "axios";
 
-const serviceCache: Service[] = [];
+type Request = (...args: any[]) => Promise<any>;
+type RequestReturn<T extends (...args: any[]) => Promise<any>> = Unpromisify<ReturnType<T>>;
 
-export class Service {
-	public readonly axiosInstance: AxiosInstance;
-	public readonly config?: AxiosRequestConfig;
-	// 保存取消请求的方法
-	private cancelers: Canceler[] = [];
+type Options<P = any> = {
+	defaultParams?: P;
+	defaultData?: any;
+	manual?: boolean;
+};
 
-	public get url() {
-		return this.config?.url || "";
-	}
+const cancelMap = new Map<CancelToken, CancelTokenSource>();
 
-	constructor(config: AxiosRequestConfig) {
-		this.config = config;
-		this.axiosInstance = axios.create(config);
-		this.axiosInstance.interceptors.request.use(this.setCancelToken.bind(this));
-	}
-
-	/**
-	 * 设置取消请求的token
-	 */
-	private setCancelToken(config: AxiosRequestConfig) {
-		if (!config.cancelToken && !config.cancelIgnore) {
-			config.cancelToken = new axios.CancelToken((cancel) => {
-				this.cancelers.push(cancel);
-			});
-		}
-		return config;
-	}
-
-	/**
-	 * 取消所有请求
-	 */
-	public cancelAll() {
-		const { cancelers } = this;
-		cancelers.forEach((canceler) => canceler());
-		cancelers.length = 0;
-	}
+/**
+ * 取消全部请求
+ */
+export function cancelAll() {
+	cancelMap.forEach((source) => source.cancel());
+	cancelMap.clear();
 }
 
-export function cancelAll() {
-	serviceCache.forEach((service) => service.cancelAll());
+/**
+ * 设置取消请求的token
+ * @param axiosInstance
+ */
+function setCancelToken(axiosInstance: AxiosInstance) {
+	axiosInstance.interceptors.request.use((config) => {
+		const source = axios.CancelToken.source();
+		if (!config.cancelToken && !config.cancelIgnore) {
+			config.cancelToken = source.token;
+			cancelMap.set(source.token, source);
+		}
+		return config;
+	});
+	// 请求结束，删除保存的token
+	axiosInstance.interceptors.response.use((response) => {
+		const { config } = response;
+		if (config.cancelToken) {
+			cancelMap.delete(config.cancelToken);
+		}
+		return response;
+	});
+}
+
+export function createRequest<T extends Request>(requestFn: T, options?: Options<Parameters<T>>) {
+	const loading = ref(false);
+	const data = shallowRef(options?.defaultData) as ShallowRef<RequestReturn<T>>;
+
+	const run = function (...args: Parameters<T>): Promise<RequestReturn<T>> {
+		loading.value = true;
+		return requestFn(...(args.length ? args : options?.defaultParams ?? []))
+			.then((response) => {
+				data.value = response;
+				return response;
+			})
+			.finally(() => {
+				loading.value = false;
+			});
+	};
+
+	if (!options?.manual) {
+		(run as T)();
+	}
+
+	return {
+		loading,
+		data,
+		run
+	};
 }
 
 export function createAxios(config: AxiosRequestConfig) {
-	const service = new Service(config);
-	serviceCache.push(service);
-	return service;
+	const axiosInstance = axios.create({ ...config });
+	setCancelToken(axiosInstance);
+	return axiosInstance;
 }

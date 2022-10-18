@@ -19,6 +19,12 @@ module.exports = {
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-empty-function": "off",
-		"@typescript-eslint/no-non-null-assertion": "off"
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"vue/multi-word-component-names": [
+			"error",
+			{
+				ignores: ["index"]
+			}
+		]
 	}
 };

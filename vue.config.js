@@ -1,7 +1,6 @@
 const { resolve } = require("path");
 const AutoImport = require("unplugin-auto-import/webpack");
 const IconsResolver = require("unplugin-icons/resolver");
-const { FileSystemIconLoader } = require("unplugin-icons/loaders");
 const Icons = require("unplugin-icons/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
@@ -27,32 +26,20 @@ module.exports = {
 					// 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)
 					ElementPlusResolver(),
 					// 自动导入图标组件
-					IconsResolver({ prefix: "icon" })
+					IconsResolver({ prefix: "Icon" })
 				]
 			}),
 			Components({
 				resolvers: [
 					// 自动注册图标组件
-					IconsResolver({
-						prefix: "icon",
-						customCollections: ["sw"]
-						// enabledCollections: ["ep"]
-					}),
+					IconsResolver(),
 					// 自动导入 Element Plus 组件
 					ElementPlusResolver({ importStyle: "sass" })
 				],
 				// 要搜索组件的目录的相对路径。该目录下的组件不需要导入
 				dirs: ["src/components"]
 			}),
-			Icons({
-				compiler: "vue3",
-				autoInstall: true,
-				customCollections: {
-					sw: FileSystemIconLoader("src/assets/svg", (svg) =>
-						svg.replace(/^<svg /, '<svg fill="currentColor" ')
-					)
-				}
-			})
+			Icons()
 		]
 	},
 

@@ -1,3 +1,4 @@
+const { defineConfig } = require("@vue/cli-service");
 const { resolve } = require("path");
 const AutoImport = require("unplugin-auto-import/webpack");
 const IconsResolver = require("unplugin-icons/resolver");
@@ -5,8 +6,7 @@ const Icons = require("unplugin-icons/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
 
-/** @type {import('@vue/cli-service').ProjectOptions} */
-module.exports = {
+module.exports = defineConfig({
 	publicPath: "./",
 	productionSourceMap: false,
 
@@ -90,4 +90,4 @@ module.exports = {
 			config.optimization.runtimeChunk("single");
 		});
 	}
-};
+});

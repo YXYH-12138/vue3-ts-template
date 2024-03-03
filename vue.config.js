@@ -2,9 +2,10 @@ const { defineConfig } = require("@vue/cli-service");
 const { resolve } = require("path");
 const AutoImport = require("unplugin-auto-import/webpack");
 const IconsResolver = require("unplugin-icons/resolver");
-const Icons = require("unplugin-icons/webpack");
+// const Icons = require("unplugin-icons/webpack");
 const Components = require("unplugin-vue-components/webpack");
 const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+const ElementPlus = require("unplugin-element-plus/webpack");
 
 module.exports = defineConfig({
 	publicPath: "./",
@@ -24,10 +25,11 @@ module.exports = defineConfig({
 			AutoImport({
 				resolvers: [
 					// 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)
-					ElementPlusResolver(),
+					ElementPlusResolver()
 					// 自动导入图标组件
-					IconsResolver({ prefix: "Icon" })
-				]
+					// IconsResolver({ prefix: "Icon" })
+				],
+				dts: resolve(__dirname, "./src/types/auto-imports.d.ts")
 			}),
 			Components({
 				resolvers: [
@@ -36,10 +38,11 @@ module.exports = defineConfig({
 					// 自动导入 Element Plus 组件
 					ElementPlusResolver({ importStyle: "sass" })
 				],
+				dts: resolve(__dirname, "./src/types/components.d.ts"),
 				// 要搜索组件的目录的相对路径。该目录下的组件不需要导入
 				dirs: ["src/components"]
 			}),
-			Icons()
+			ElementPlus({ useSource: true })
 		]
 	},
 

@@ -1,9 +1,8 @@
 @use "sass:map";
 
-@use "./mixins/mixins.scss" as *;
-@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
-@use "./variable.scss" as *;
 @use "./reset.css";
+@use "./mixins/mixins.scss" as *;
+@use "./variable.scss" as *;
 
 :root {
 	--theme-color: #{$theme-color};

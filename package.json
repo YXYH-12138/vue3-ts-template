@@ -43,8 +43,8 @@
     "sass-loader": "^8.0.2",
     "script-ext-html-webpack-plugin": "^2.1.5",
     "typescript": "~4.5.5",
-    "unplugin-auto-import": "^0.6.1",
-    "unplugin-element-plus": "^0.3.1",
+    "unplugin-auto-import": "^0.6.9",
+    "unplugin-element-plus": "^0.8.0",
     "unplugin-icons": "^0.13.4",
     "unplugin-vue-components": "^0.17.21"
   },
